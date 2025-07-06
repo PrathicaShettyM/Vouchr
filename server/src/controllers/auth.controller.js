@@ -12,7 +12,7 @@ const db = new PrismaClient();
 // 1. user registration
 export const register = async (req, res) => {
     // destructure the data from req.body sent in HTTP request body
-    const {name, email, password, role} = req.body;
+    const {name, email, password} = req.body;
     try {
         // 1. check if the user already exists, if yes then give a warning message
         const userExists = await db.user.findUnique({
@@ -32,7 +32,7 @@ export const register = async (req, res) => {
                 name,
                 email,
                 password: hashed,
-                role: role || "VOLUNTEER",
+                role: "VOLUNTEER",
             },
         });
         // generate jwt auth token by passing user object created above
@@ -44,9 +44,9 @@ export const register = async (req, res) => {
             user: {id: user.id, name: user.name, email: user.email, role: user.role}
         }); // 201: created
     } catch (error) {
+        console.log("Error: " +error);
         res.status(500).json({
             message: "User registration failed",
-            error: error.message
         }); // 500: internal server error
     }
 }
@@ -95,6 +95,7 @@ export const login = async (req, res) => {
             user: {id: user.id, name: user.name, email: user.email, role: user.role}
         });
     } catch (error) {
+        console.log("Error: "+ error);
         res.status(500).json({
             message: "Login failed, Try again",
             error: error.message

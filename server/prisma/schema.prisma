@@ -15,6 +15,48 @@ model User {
   password  String
   role      Role      @default(VOLUNTEER)
   createdAt DateTime  @default(now())
+
+  profile   Profile?   // bidirectional relation for profile
+  eventSignups   EventVolunteer[]  // reverse relation for event signups
+}
+
+// Profile model
+model Profile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  email     String
+  gender    String?
+  bio       String?
+  location  String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+// Event model
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  city        String
+  date        DateTime
+  maxVolunteers Int
+  imageUrl    String?
+  createdBy   String
+  volunteers  EventVolunteer[]
+}
+
+// Event Volunteer
+model EventVolunteer {
+  id       String   @id @default(uuid())
+  eventId  String
+  userId   String
+
+  event    Event @relation(fields: [eventId], references: [id])
+  user     User  @relation(fields: [userId], references: [id])
+
+  @@unique([eventId, userId]) // Prevent duplicate signup
 }
 
 enum Role {
