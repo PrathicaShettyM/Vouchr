@@ -66,9 +66,9 @@ model EventVolunteer {
 model CheckIn {
   id           Int @id @default(autoincrement())
   volunteer    User @relation(fields: [volunteerId], references: [id])
-  volunteerId  Int
+  volunteerId  String
   event        Event @relation(fields: [eventId], references: [id])
-  eventId      Int
+  eventId      String
   latitude     Float
   longitude    Float
   checkedInAt  DateTime @default(now())
