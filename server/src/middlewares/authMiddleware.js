@@ -36,6 +36,15 @@ export const isAdmin = (req, res, next) => {
     });
 }
 
+export function isVolunteer(req, res, next){
+    if(req.user.role != 'VOLUNTEER'){
+        return res.status(403).json({
+            message: "Access denied"
+        });
+    }
+    next();
+}
+
 // ## Middleware in Express.js
 // 1. It is a function that runs during the request-response cycle, 
 // with access to the req (request), res (response), and next (a function to pass control to the next middleware or route handler). 

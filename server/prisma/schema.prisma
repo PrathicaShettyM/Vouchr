@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// User model
+// 1. User model: manage volunteer signups and signins
 model User {
   id        String    @id @default(uuid())
   name      String
@@ -18,9 +18,10 @@ model User {
 
   profile   Profile?   // bidirectional relation for profile
   eventSignups   EventVolunteer[]  // reverse relation for event signups
+  checkIns CheckIn[]
 }
 
-// Profile model
+// 2. Profile model: profile of volunteers
 model Profile {
   id        String   @id @default(uuid())
   userId    String   @unique
@@ -34,7 +35,7 @@ model Profile {
   user      User     @relation(fields: [userId], references: [id])
 }
 
-// Event model
+// 3. Event model: events by the NGO
 model Event {
   id          String   @id @default(uuid())
   title       String
@@ -44,10 +45,12 @@ model Event {
   maxVolunteers Int
   imageUrl    String?
   createdBy   String
+
   volunteers  EventVolunteer[]
+  checkIns CheckIn[]
 }
 
-// Event Volunteer
+// 4. Event Volunteer: select volunteers per event
 model EventVolunteer {
   id       String   @id @default(uuid())
   eventId  String
@@ -58,6 +61,22 @@ model EventVolunteer {
 
   @@unique([eventId, userId]) // Prevent duplicate signup
 }
+
+// 5. CheckIn time: for attendence
+model CheckIn {
+  id           Int @id @default(autoincrement())
+  volunteer    User @relation(fields: [volunteerId], references: [id])
+  volunteerId  Int
+  event        Event @relation(fields: [eventId], references: [id])
+  eventId      Int
+  latitude     Float
+  longitude    Float
+  checkedInAt  DateTime @default(now())
+}
+
+
+
+
 
 enum Role {
   ADMIN
