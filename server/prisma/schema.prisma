@@ -19,6 +19,7 @@ model User {
   profile   Profile?   // bidirectional relation for profile
   eventSignups   EventVolunteer[]  // reverse relation for event signups
   checkIns CheckIn[]
+  messages Message[] // reverse relation
 }
 
 // 2. Profile model: profile of volunteers
@@ -48,6 +49,7 @@ model Event {
 
   volunteers  EventVolunteer[]
   checkIns CheckIn[]
+  messages Message[]
 }
 
 // 4. Event Volunteer: select volunteers per event
@@ -74,7 +76,21 @@ model CheckIn {
   checkedInAt  DateTime @default(now())
 }
 
-
+// 6. Chat messages
+model Message {
+  id          String @id @default(uuid())
+  content     String?
+  imageUrl    String?
+  
+  sender      User @relation(fields: [senderId], references: [id])
+  senderId    String
+  
+  event       Event @relation(fields: [eventId], references: [id])
+  eventId     String
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 
 
 
